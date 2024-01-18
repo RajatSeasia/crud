@@ -4,6 +4,7 @@ import userRouter from "./routes/userRouter.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongodb from "./dbconfig.js";
+
 dotenv.config();
 
 const app = express();
@@ -26,11 +27,11 @@ app.use((req, res, next) => {
   next();
 });
 
+
 const port = process.env.PORT;
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
-
 app.use("/api/v1/user", userRouter);
 
 app.listen(port, () => {

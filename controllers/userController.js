@@ -1,17 +1,22 @@
 import UserRegister from "../models/newUserRegister.js";
 import UserLogin from "../models/loginUser.js";
+import bcrypt from 'bcrypt'
+import jsonwebtoken from "../jwt/jwt.js";
+
 export const register = async (req, res) => {
   const { name, email, password, confirmPassword, phone, createdAt } = req.body;
+  const hashedPassword = await bcrypt.hash(password, 10);
   try {
     const user = new UserRegister({
       name,
       email,
-      password,
-      confirmPassword,
+      password:hashedPassword,
+      confirmPassword:hashedPassword,
       phone,
       createdAt,
     });
 
+    await user.save();
     await user.save();
 
     res.status(200).json("user Created successfully"); // returning data with status code 200
@@ -22,15 +27,22 @@ export const register = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
   try {
-    const loginUsers = await UserRegister.findOne({ email: email });
-    if (loginUsers.email === email) {
-      res.status(200).json("user logged in  successfully"); // returning data with status code 200
+    const { email, password } = req.body;
+    const user = await UserRegister.findOne({ email });
+    if (!user) {
+    return res.status(401).json({ error: 'Authentication failed' });
     }
-  } catch (err) {
-    res.status(400).json({ error: err });
-  }
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+    return res.status(401).json({ error: 'wrong password' });
+    }
+    const token = jsonwebtoken(user)
+
+    res.status(200).json({code:200, token: token,message:"User Logged in successfully" });
+    } catch (error) {
+    res.status(500).json({ error: 'Login failed' });
+    }
 };
 
 export const getAllUser = async (req, res) => {
