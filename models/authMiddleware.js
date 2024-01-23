@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { jwtDecode } from 'jwt-decode';
 
 const verifyToken=(req,res,next)=>{
     try{
@@ -6,9 +7,8 @@ const verifyToken=(req,res,next)=>{
    
     if (!token) return res.status(401).json({ error: 'Access denied' });
    
-        const decoded = jwt.verify(token, 'SECRET');
-        console.log(decoded,"dccc")
-        console.log(req,"req")
+        const decoded = jwtDecode(token);
+        console.log('decoded', decoded)
         req._id = decoded._id;
         next();
     }catch(err){

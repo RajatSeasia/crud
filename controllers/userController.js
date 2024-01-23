@@ -2,9 +2,10 @@ import UserRegister from "../models/newUserRegister.js";
 import UserLogin from "../models/loginUser.js";
 import bcrypt from 'bcrypt'
 import jsonwebtoken from "../jwt/jwt.js";
+import { jwtDecode } from 'jwt-decode';
 
 export const register = async (req, res) => {
-  const { name, email, password, confirmPassword, phone, createdAt } = req.body;
+  const { name, email, password, phone, createdAt } = req.body;
   const hashedPassword = await bcrypt.hash(password, 10);
   try {
     const user = new UserRegister({
@@ -16,9 +17,7 @@ export const register = async (req, res) => {
       createdAt,
     });
 
-    await user.save();
-    await user.save();
-
+    await user.save()
     res.status(200).json("user Created successfully"); // returning data with status code 200
   } catch (error) {
     // this is for throwing error
@@ -47,14 +46,16 @@ export const login = async (req, res) => {
 
 export const getAllUser = async (req, res) => {
   try {
-    const allUser = await UserRegister.find();
+    const allUser = await UserRegister.findOne().select("-password").select("-confirmPassword");
     res.status(200).json(allUser);
   } catch (err) {
     res.status(400).json({ error: err });
   }
 };
+
+
 export const deleteUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email } = req.body;
 
   try {
     const allUser = await UserRegister.deleteOne({ email: email });
@@ -65,7 +66,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 export const updateUser = async (req, res) => {
-  const { email, password, name, phone } = req.body;
+  const { email,name, phone } = req.body;
   try {
     const allUser = await UserRegister.updateOne(
       { email: email },
@@ -76,3 +77,18 @@ export const updateUser = async (req, res) => {
     res.status(400).json({ error: err });
   }
 };
+
+export const getUserProfile=async(req,res)=>{
+  const { email,name, phone } = req.body;
+  try{
+    const token = req.header('Authorization');
+    const decoded = jwtDecode(token);
+    const user = await UserRegister.findOne({ id:decoded.id }).select("-password").select("-confirmPassword");;
+  
+     res.status(200).json(user)
+  }catch(err){
+    res.status(400).json({ error: err });
+  }
+}
+
+
