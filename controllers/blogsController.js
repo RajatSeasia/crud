@@ -1,8 +1,5 @@
-import { config } from "dotenv";
-import createblogs from "../models/CreateblogsMiddleware.js";
-config();
+import createblogs from "../models/CreateblogsModels.js";
 
-const basedir = process.env.API_URL;
 
 export const createUserBlogs = async (req, res) => {
   const { title, image, text, price, createdAt, updateAt } = req.body;

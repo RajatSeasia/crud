@@ -4,6 +4,8 @@ import userRouter from "./routes/userRouter.js";
 import bodyParser from "body-parser";
 import cors from "cors";
 import mongodb from "./dbconfig.js";
+import { Server } from "socket.io";
+import { createServer } from 'http';
 
 config();
 
@@ -26,8 +28,14 @@ app.use((req, res, next) => {
   );
   next();
 });
+const server = createServer(app);
+const io = new Server(server);
+io.on('connection', (socket) => {
+  console.log('New connection')
+})
 
 const port = process.env.PORT;
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });

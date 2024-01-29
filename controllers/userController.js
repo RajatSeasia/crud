@@ -1,4 +1,4 @@
-import UserRegister from "../models/newUserRegister.js";
+import UserRegister from "../models/newUserRegisterModel.js";
 import bcrypt from "bcrypt";
 import jsonwebtoken from "../jwt/jwt.js";
 import { jwtDecode } from "jwt-decode";

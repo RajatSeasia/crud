@@ -4,6 +4,8 @@ import verifyToken from "../models/authMiddleware.js";
 import { download, getListFiles, upload } from "../controllers/file.Controller.js";
 import uploadFile from "../models/upload.js";
 import { createUserBlogs, getAllBlogs } from "../controllers/blogsController.js";
+import { createUserProducts } from "../controllers/productsController.js";
+import { searchAll } from "../controllers/globalSearchController.js";
 
 const userRouter = Router();
 
@@ -19,6 +21,8 @@ userRouter.get('/download-all',verifyToken, download)
 userRouter.get('/logout',verifyToken, logOut)
 userRouter.post('/create-blogs',verifyToken,createUserBlogs)
 userRouter.get('/get-all-blogs',verifyToken,getAllBlogs)
+userRouter.post('/create-products',verifyToken,createUserProducts)
+userRouter.get('/search-all',verifyToken,searchAll)
 
 
 
